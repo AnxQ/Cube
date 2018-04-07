@@ -200,15 +200,28 @@ void BoxApp::DrawScene()
 
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		// ¾²Ì¬»º´æ²¿·Ö
-
-		md3dImmediateContext->IASetVertexBuffers(0, 1, &mVB, &stride, &offset);
-		md3dImmediateContext->IASetIndexBuffer(mIB, DXGI_FORMAT_R32_UINT, 0);
-
 		// Matrices
 		XMMATRIX world;
 		XMMATRIX worldInvTranspose;
 		XMMATRIX worldViewProj;
+
+		for (vector<d3dObject*>::iterator iter = mpObjects.begin(); iter != mpObjects.end(); iter++)
+		{
+			(*iter)->Render(md3dImmediateContext);
+			world = XMLoadFloat4x4(&(*iter)->mWorld);
+			worldInvTranspose = MathHelper::InverseTranspose(world);
+			worldViewProj = world * view * proj;
+
+			mfxWorld->SetMatrix(reinterpret_cast<float*>(&world));
+			mfxWorldInvTranspose->SetMatrix(reinterpret_cast<float*>(&worldInvTranspose));
+			mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&worldViewProj));
+			mfxMaterial->SetRawValue(&(*iter)->mMat, 0, sizeof((*iter)->mMat));
+		}
+
+		// ¾²Ì¬»º´æ²¿·Ö
+
+		md3dImmediateContext->IASetVertexBuffers(0, 1, &mVB, &stride, &offset);
+		md3dImmediateContext->IASetIndexBuffer(mIB, DXGI_FORMAT_R32_UINT, 0);
 
 		// Box
 		world = XMLoadFloat4x4(&mBoxWorld);

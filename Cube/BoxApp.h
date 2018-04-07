@@ -34,7 +34,7 @@ private:
 
 
 private:
-	ID3D11Buffer * mVB;
+	ID3D11Buffer* mVB;
 	ID3D11Buffer* mIB;
 
 	ID3D11Buffer* mWavesVB;
