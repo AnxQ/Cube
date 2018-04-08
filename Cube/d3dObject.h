@@ -23,10 +23,6 @@ enum AnimationType {
 
 class d3dObject
 {
-	struct Vertex {
-		XMFLOAT3 pos;
-		XMFLOAT3 normal;
-	};
 public:
 
 	// Object data
@@ -42,21 +38,44 @@ public:
 	float mStartTick;
 	float mCurrentTick;
 	float mEndTick;
+	bool mTransforming;
 
 	AnimationMethod mCurrentMethod;
 	AnimationType mCurrentType;
-	XMVECTOR mOriginTransforVector;
-	XMVECTOR mCurrentTransformVector;
 
+	//	变换矩阵
+	XMMATRIX mCurrentWorldMatrix;
+	XMMATRIX mCurrentTransformMatrix;
+
+	//	移动向量
+	XMVECTOR mTOriginVector;
+	XMVECTOR mTCurrentVector;
+	//	旋转向量
+	XMVECTOR mROriginVector;
+	XMVECTOR mRCurrentVector;
+	//	缩放向量
+	XMVECTOR mSOriginVector;
+	XMVECTOR mSCurrentVector;
+
+	//	Position&Transform
 	XMFLOAT4X4 mWorld;
+	XMFLOAT3 mPosition;
+
 
 public:
 	bool BuildVertexBuffer(ID3D11Device*);
-	bool Update(ID3D11DeviceContext*);
+	bool Update(ID3D11DeviceContext*, float);
 	bool Render(ID3D11DeviceContext*);
-	bool Move(XMVECTOR);
-	bool Rotate(XMVECTOR);
-	bool Scale(XMVECTOR);
+	bool SetBuffer(ID3D11DeviceContext*);
+
+	void UpdateWorldMatrix();
+
+	bool Move(XMFLOAT3);
+	bool Move(XMFLOAT3, float duration);
+	bool Move(XMFLOAT3, float duration, float start, float end);
+
+	bool Rotate(XMFLOAT3);
+
 	d3dObject();
 	~d3dObject();
 };

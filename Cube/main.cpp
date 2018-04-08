@@ -44,7 +44,7 @@ BoxApp::BoxApp(HINSTANCE hInstance)
 	mWireframeRS(0),
 	mCam()
 {
-	mMainWndCaption = L"JumpJump in DirectX11";
+	mMainWndCaption = L"EasyDirectX11";
 
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
@@ -104,10 +104,16 @@ bool BoxApp::Init()
 
 	mWaves.Init(160, 160, 1.0f, 0.03f, 3.25f, 0.4f);
 
+
 	BuildGeometryBuffers();
 	BuildWaveGeometryBuffers();
+
+	mpObjects.push_back( new d3dObject() );
+	mpObjects[0]->BuildVertexBuffer(md3dDevice);
+
 	BuildFX();
 	BuildVertexLayout();
+
 
 	D3D11_RASTERIZER_DESC wireframeDesc;
 	ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -140,9 +146,11 @@ void BoxApp::UpdateScene(float dt)
 
 	if (GetAsyncKeyState('D') & 0x8000)
 		mCam.Strafe(10.0f*dt);
+	
+	if (GetKeyState(VK_SPACE))
+		mpObjects[0]->Move(XMFLOAT3(10,10,10),5.0f);
 
-
-	static float t_base = 0.0f;
+	/*static float t_base = 0.0f;
 	if ((mTimer.TotalTime() - t_base) >= 0.25f)
 	{
 		t_base += 0.25f;
@@ -153,6 +161,10 @@ void BoxApp::UpdateScene(float dt)
 		float r = MathHelper::RandF(1.0f, 2.0f);
 
 		mWaves.Disturb(i, j, r);
+	}*/
+
+	for (vector<d3dObject*>::iterator iter = mpObjects.begin(); iter != mpObjects.end(); iter++) {
+		(*iter)->Update(md3dImmediateContext, dt);
 	}
 
 	mWaves.Update(dt);
@@ -207,7 +219,8 @@ void BoxApp::DrawScene()
 
 		for (vector<d3dObject*>::iterator iter = mpObjects.begin(); iter != mpObjects.end(); iter++)
 		{
-			(*iter)->Render(md3dImmediateContext);
+			(*iter)->SetBuffer(md3dImmediateContext);
+
 			world = XMLoadFloat4x4(&(*iter)->mWorld);
 			worldInvTranspose = MathHelper::InverseTranspose(world);
 			worldViewProj = world * view * proj;
@@ -216,6 +229,9 @@ void BoxApp::DrawScene()
 			mfxWorldInvTranspose->SetMatrix(reinterpret_cast<float*>(&worldInvTranspose));
 			mfxWorldViewProj->SetMatrix(reinterpret_cast<float*>(&worldViewProj));
 			mfxMaterial->SetRawValue(&(*iter)->mMat, 0, sizeof((*iter)->mMat));
+
+			mTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+			(*iter)->Render(md3dImmediateContext);
 		}
 
 		// ¾²Ì¬»º´æ²¿·Ö

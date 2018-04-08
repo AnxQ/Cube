@@ -15,5 +15,5 @@ void MutexLock::Lock() {
 }
 
 void MutexLock::Unlock() {
-	LeaveCriticalSection(&mCS)
+	LeaveCriticalSection(&mCS);
 }
