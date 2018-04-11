@@ -1,5 +1,16 @@
 #include "d3dObject.h"
 
+d3dObject::d3dObject(XMFLOAT3 initPos, const GeometryGenerator::MeshData& initMesh) 
+	:d3dObject(initPos) {
+	mMeshData = initMesh;
+}
+
+d3dObject::d3dObject(XMFLOAT3 initPos)
+	:d3dObject(){
+	XMStoreFloat4x4(&mCurrentWorldMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&mWorld, XMMatrixTranslation(initPos.x, initPos.y, initPos.z));
+}
+
 d3dObject::d3dObject()
 	:mStartTick(0),
 	mCurrentTick(0),
@@ -9,8 +20,7 @@ d3dObject::d3dObject()
 	mTransforming(false)
 {
 	XMMATRIX I = XMMatrixIdentity();
-	mCurrentWorldMatrix = I;
-	mCurrentTransformMatrix = I;
+	XMStoreFloat4x4(&mCurrentWorldMatrix, I);
 	XMStoreFloat4x4(&mWorld, I);
 
 	mMat.Ambient = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
@@ -72,16 +82,18 @@ bool d3dObject::Update(ID3D11DeviceContext* d3dContext, float dt) {
 	if (mCurrentTick >= mEndTick) {
 		mCurrentType = AnimationType::NONE;
 		mTransforming = false;
+		UpdateWorldMatrix();
+		mTOriginVector = {0,0,0};
 		return true;
 	}
 	float trans_delta = 0.0f;
-	XMMATRIX T;
 	switch (mCurrentType) {
 	case AnimationType::MOVING:
 		trans_delta = (mCurrentTick - mStartTick) / (mEndTick - mStartTick);
-		mTCurrentVector = trans_delta * mTOriginVector;
-		T = XMMatrixTranslationFromVector(mTCurrentVector);
-		XMStoreFloat4x4(&mWorld, XMMatrixMultiply(T, mCurrentWorldMatrix));
+		XMStoreFloat4x4(&mWorld, 
+			XMMatrixTranslationFromVector(
+				trans_delta*XMLoadFloat3(&mTOriginVector)) 
+			* XMLoadFloat4x4(&mCurrentWorldMatrix));
 		break;
 	default:
 		break;
@@ -90,7 +102,8 @@ bool d3dObject::Update(ID3D11DeviceContext* d3dContext, float dt) {
 }
 
 bool d3dObject::Move(XMFLOAT3 delta) {
-	mCurrentTransformMatrix = XMMatrixTranslationFromVector(XMLoadFloat3(&delta));
+	mTOriginVector = delta;
+	XMStoreFloat3(&mPosition,XMLoadFloat3(&delta)+XMLoadFloat3(&mPosition));
 	UpdateWorldMatrix();
 	return true;
 }
@@ -98,14 +111,15 @@ bool d3dObject::Move(XMFLOAT3 delta) {
 bool d3dObject::Move(XMFLOAT3 delta, float duration) {
 	if (mTransforming)
 		return false;
-	mCurrentWorldMatrix = XMLoadFloat4x4(&mWorld);
+	mCurrentWorldMatrix = mWorld;
 	mEndTick = duration;
-	mTOriginVector = XMLoadFloat3(&delta);
+	mCurrentTick = 0;
+	mTOriginVector = delta;
 	mCurrentType = AnimationType::MOVING;
 	mTransforming = true;
 	return true;
 }
 
 void d3dObject::UpdateWorldMatrix() {
-	XMStoreFloat4x4(&mWorld, XMMatrixMultiply(mCurrentTransformMatrix, mCurrentWorldMatrix));
+	XMStoreFloat4x4(&mWorld, XMMatrixTranslationFromVector(XMLoadFloat3(&mTOriginVector)) * XMLoadFloat4x4(&mCurrentWorldMatrix));
 }

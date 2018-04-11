@@ -7,6 +7,7 @@
 
 #include "d3dUtil.h"
 #include "GeometryGenerator.h"
+#include "MutexLock.h"
 
 enum AnimationMethod {
 	LINEAR,
@@ -37,30 +38,25 @@ public:
 
 	float mStartTick;
 	float mCurrentTick;
+	float mLastTick;
 	float mEndTick;
 	bool mTransforming;
 
 	AnimationMethod mCurrentMethod;
 	AnimationType mCurrentType;
 
-	//	变换矩阵
-	XMMATRIX mCurrentWorldMatrix;
-	XMMATRIX mCurrentTransformMatrix;
-
 	//	移动向量
-	XMVECTOR mTOriginVector;
-	XMVECTOR mTCurrentVector;
+	XMFLOAT3 mTOriginVector;
 	//	旋转向量
-	XMVECTOR mROriginVector;
-	XMVECTOR mRCurrentVector;
+	XMFLOAT3 mROriginVector;
 	//	缩放向量
-	XMVECTOR mSOriginVector;
-	XMVECTOR mSCurrentVector;
+	XMFLOAT3 mSOriginVector;
+	//	暂存原始世界矩阵
+	XMFLOAT4X4 mCurrentWorldMatrix;
 
-	//	Position&Transform
+	//	Position & Transform
 	XMFLOAT4X4 mWorld;
 	XMFLOAT3 mPosition;
-
 
 public:
 	bool BuildVertexBuffer(ID3D11Device*);
@@ -76,7 +72,11 @@ public:
 
 	bool Rotate(XMFLOAT3);
 
+	bool Scale(XMFLOAT3);
+
 	d3dObject();
+	d3dObject(XMFLOAT3);
+	d3dObject(XMFLOAT3,const GeometryGenerator::MeshData&);
 	~d3dObject();
 };
 

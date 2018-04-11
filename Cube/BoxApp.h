@@ -27,7 +27,6 @@ public:
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
 private:
-	void BuildGeometryBuffers();
 	void BuildFX();
 	void BuildVertexLayout();
 	void BuildWaveGeometryBuffers();
@@ -55,7 +54,6 @@ private:
 	DirectionalLight mDirLight;
 	SpotLight mSpotLight;
 
-	Material mGeoMat;
 	Material mWavesMat;
 
 	ID3D11InputLayout* mInputLayout;
@@ -64,21 +62,10 @@ private:
 
 	Camera mCam;
 
-	XMFLOAT4X4 mBoxWorld;
-	XMFLOAT4X4 mGridWorld;
 	XMFLOAT4X4 mWavesWorld;
 
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
-
-	UINT mBoxVertexBufferOffset;
-	UINT mGridVertexBufferOffset;
-
-	UINT mGridIndexBufferOffset;
-	UINT mBoxIndexBufferOffset;
-
-	UINT mBoxIndexCount;
-	UINT mGridIndexCount;
 
 	float mTheta;
 	float mPhi;
