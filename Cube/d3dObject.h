@@ -28,13 +28,12 @@ public:
 
 	// Object data
 
-	GeometryGenerator mGeoGen;
 	GeometryGenerator::MeshData mMeshData;
 	Material mMat;
 	ID3D11Buffer* mIndexBuffer;
 	ID3D11Buffer* mVertexBuffer;
 
-	// Animating
+	//	Animating
 
 	float mStartTick;
 	float mCurrentTick;
@@ -45,16 +44,12 @@ public:
 	AnimationMethod mCurrentMethod;
 	AnimationType mCurrentType;
 
-	//	移动向量
 	XMFLOAT3 mTOriginVector;
-	//	旋转向量
 	XMFLOAT3 mROriginVector;
-	//	缩放向量
 	XMFLOAT3 mSOriginVector;
-	//	暂存原始世界矩阵
-	XMFLOAT4X4 mCurrentWorldMatrix;
 
 	//	Position & Transform
+	XMFLOAT4X4 mCurrentWorldMatrix;
 	XMFLOAT4X4 mWorld;
 	XMFLOAT3 mPosition;
 

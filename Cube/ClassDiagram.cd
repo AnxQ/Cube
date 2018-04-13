@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BoxApp">
+    <Position X="7.25" Y="0.5" Width="4" />
+    <InheritanceLine Type="D3DApp" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5" Y="1" />
+        <Point X="5" Y="0.75" />
+        <Point X="7.25" Y="0.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AABCkEKAAMgghIAIQQAAAEIAArGhqwhAIAACGAACCAA=</HashCode>
+      <FileName>BoxApp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="d3dObject">
+    <Position X="11.5" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>CAQAAAQBQYAUAAACBAIIAAAAFBABAAAIABAAAQASAkg=</HashCode>
+      <FileName>d3dObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="D3DApp">
+    <Position X="3.25" Y="1" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>EAABEABBEEAgAAAKQ4ASAAAAghIyAAJAJIACAEACBAo=</HashCode>
+      <FileName>E:\Direct3D\Common\d3dApp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GeometryGenerator">
+    <Position X="14.75" Y="3.25" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="GeometryGenerator::Vertex">
+        <TypeIdentifier>
+          <NewMemberFileName>E:\Direct3D\Common\GeometryGenerator.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="GeometryGenerator::MeshData">
+        <TypeIdentifier>
+          <NewMemberFileName>E:\Direct3D\Common\GeometryGenerator.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ABAAgkAAQAAAAAAIAAQAAgAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>E:\Direct3D\Common\GeometryGenerator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MutexLock">
+    <Position X="17.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gAAQAAAAAAAAAAAAAAAABAAAAACAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>MutexLock.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SoundEngine">
+    <Position X="14.75" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAgAAUACCAEAA=</HashCode>
+      <FileName>SoundEngine.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameTimer">
+    <Position X="0.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AhAAAAgAACAABAAJAAAIAgAAAAAAAAUAIAAAAAAAQQA=</HashCode>
+      <FileName>E:\Direct3D\Common\GameTimer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Vertex">
+    <Position X="12" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>main.cpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

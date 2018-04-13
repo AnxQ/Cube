@@ -1,5 +1,6 @@
 #include "d3dObject.h"
 
+// Specified MeshData 
 d3dObject::d3dObject(XMFLOAT3 initPos, const GeometryGenerator::MeshData& initMesh) 
 	:d3dObject(initPos) {
 	mMeshData = initMesh;
@@ -11,13 +12,17 @@ d3dObject::d3dObject(XMFLOAT3 initPos)
 	XMStoreFloat4x4(&mWorld, XMMatrixTranslation(initPos.x, initPos.y, initPos.z));
 }
 
+// Default: 4x4x4 Box
 d3dObject::d3dObject()
 	:mStartTick(0),
 	mCurrentTick(0),
 	mEndTick(0),
 	mCurrentType(AnimationType::NONE),
 	mCurrentMethod(AnimationMethod::SMOOTH),
-	mTransforming(false)
+	mTransforming(false),
+	mTOriginVector(0,0,0),
+	mROriginVector(0,0,0),
+	mSOriginVector(1.0f,1.0f,1.0f)
 {
 	XMMATRIX I = XMMatrixIdentity();
 	XMStoreFloat4x4(&mCurrentWorldMatrix, I);
@@ -27,7 +32,8 @@ d3dObject::d3dObject()
 	mMat.Diffuse = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
 	mMat.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 
-	mGeoGen.CreateBox(3.0f, 3.0f, 3.0f, mMeshData);
+	GeometryGenerator GeoGen;
+	GeoGen.CreateBox(4.0f, 4.0f, 4.0f, mMeshData);
 }
 
 d3dObject::~d3dObject()
@@ -102,8 +108,9 @@ bool d3dObject::Update(ID3D11DeviceContext* d3dContext, float dt) {
 }
 
 bool d3dObject::Move(XMFLOAT3 delta) {
+	mCurrentWorldMatrix = mWorld;
 	mTOriginVector = delta;
-	XMStoreFloat3(&mPosition,XMLoadFloat3(&delta)+XMLoadFloat3(&mPosition));
+	XMStoreFloat3(&mPosition, XMLoadFloat3(&delta)+XMLoadFloat3(&mPosition));
 	UpdateWorldMatrix();
 	return true;
 }
@@ -111,6 +118,7 @@ bool d3dObject::Move(XMFLOAT3 delta) {
 bool d3dObject::Move(XMFLOAT3 delta, float duration) {
 	if (mTransforming)
 		return false;
+	XMStoreFloat3(&mPosition, XMLoadFloat3(&delta) + XMLoadFloat3(&mPosition));
 	mCurrentWorldMatrix = mWorld;
 	mEndTick = duration;
 	mCurrentTick = 0;
@@ -120,6 +128,27 @@ bool d3dObject::Move(XMFLOAT3 delta, float duration) {
 	return true;
 }
 
+bool d3dObject::Rotate(XMFLOAT3 delta) {
+	mCurrentWorldMatrix = mWorld;
+	mROriginVector = delta;
+	UpdateWorldMatrix();
+	mROriginVector = XMFLOAT3(0,0,0);
+	return true;
+}
+
+bool d3dObject::Scale(XMFLOAT3 des) {
+	mCurrentWorldMatrix = mWorld;
+	mSOriginVector = des;
+	UpdateWorldMatrix();
+	mSOriginVector = XMFLOAT3(1, 1, 1);
+	return true;
+}
+
 void d3dObject::UpdateWorldMatrix() {
-	XMStoreFloat4x4(&mWorld, XMMatrixTranslationFromVector(XMLoadFloat3(&mTOriginVector)) * XMLoadFloat4x4(&mCurrentWorldMatrix));
+	XMStoreFloat4x4(&mWorld, 
+		XMMatrixTranslationFromVector(XMLoadFloat3(&mTOriginVector)) *
+		XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&mROriginVector)) *
+		XMMatrixScalingFromVector(XMLoadFloat3(&mSOriginVector)) *
+		XMLoadFloat4x4(&mCurrentWorldMatrix));
+
 }

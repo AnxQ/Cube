@@ -95,14 +95,21 @@ bool BoxApp::Init()
 
 	mWaves.Init(160, 160, 1.0f, 0.03f, 3.25f, 0.4f);
 
-
-	// BuildGeometryBuffers();
 	BuildWaveGeometryBuffers();
 
 	mpObjects.push_back(new d3dObject(XMFLOAT3(0.0f, -2.0f, 0.0f)));
+	mpObjects.push_back(new d3dObject(XMFLOAT3(5.0f, -2.0f, 5.0f)));
+
 	mpObjects[0]->BuildVertexBuffer(md3dDevice);
+	mpObjects[1]->BuildVertexBuffer(md3dDevice);
+
 	mpObjects[0]->Move(XMFLOAT3(0.0f, 2.0F, 0.0F), 0.5f);
-	mWaves.Disturb(80, 79, -0.5f);
+	mpObjects[1]->Move(XMFLOAT3(0.0f, 2.0F, 0.0F), 0.5f);
+
+	mWaves.Disturb(XMFLOAT3(0.0f, 0.0f, -0.8));
+	mWaves.Disturb(XMFLOAT3(5.0f, 5.0f, -0.8));
+
+
 
 	BuildFX();
 	BuildVertexLayout();
@@ -140,22 +147,32 @@ void BoxApp::UpdateScene(float dt)
 	if (GetAsyncKeyState('D') & 0x8000)
 		mCam.Strafe(10.0f*dt);
 
-	/*if (GetAsyncKeyState(VK_SPACE) & 0x8000)
-		mpObjects[0]->Move(XMFLOAT3(10,10,10),1.0f);*/
+	if (GetAsyncKeyState('T') & 0x8000) {
+		mpObjects[0]->Move(XMFLOAT3(-0.1f, 0, 0));
+	}
+	if (GetAsyncKeyState('E') & 0x8000) {
+		mpObjects[0]->Move(XMFLOAT3(0.0f, 0.0f, -0.1f));
+	}
+	if (GetAsyncKeyState('V') & 0x8000) {
+		mpObjects[0]->Move(XMFLOAT3(0.0f, 0.0f, 0.1f));
+	}
+	if (GetAsyncKeyState('X') & 0x8000) {
+		mpObjects[0]->Move(XMFLOAT3(0.1f, 0, 0));
+	}
+	/*static float t_base = 0.0f;
+	if ((mTimer.TotalTime() - t_base) >= 0.25f)
+	{
+		t_base += 0.25f;
 
-		/*static float t_base = 0.0f;
-		if ((mTimer.TotalTime() - t_base) >= 0.25f)
-		{
-			t_base += 0.25f;
+		DWORD i = 5 + rand() % (mWaves.RowCount() - 10);
+		DWORD j = 5 + rand() % (mWaves.ColumnCount() - 10);
 
-			DWORD i = 5 + rand() % (mWaves.RowCount() - 10);
-			DWORD j = 5 + rand() % (mWaves.ColumnCount() - 10);
+		float r = MathHelper::RandF(1.0f, 2.0f);
 
-			float r = MathHelper::RandF(1.0f, 2.0f);
+		mWaves.Disturb(i, j, r);
+	}*/
 
-			mWaves.Disturb(i, j, r);
-		}*/
-
+	// Update every object in Object storing region
 	for (vector<d3dObject*>::iterator iter = mpObjects.begin(); iter != mpObjects.end(); iter++) {
 		(*iter)->Update(md3dImmediateContext, dt);
 	}
